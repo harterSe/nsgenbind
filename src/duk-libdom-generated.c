@@ -218,25 +218,63 @@ output_generated_attribute_user_setter(FILE* outf,
                     (atributee->name[1] != 'n')) {
                         return -1; /* not onxxx */
                 }
+                char autocomplete[] = "autocomplete";
+                char autocompleteerror[] = "autocompleteerror";
+                char dragexit[] = "dragexit";
+                char mouseenter[] = "mouseenter";
+                char mouseleave[] = "mouseleave";
+                char wheel[] = "wheel";
+                char sort[] = "sort";
+                char toggle[] = "toggle";
 
-                fprintf(outf,
-                        "\t/* handlerfn */\n"
-                        "\tduk_push_this(ctx);\n"
-                        "\t/* handlerfn this */\n"
-                        "\tduk_get_prop_string(ctx, -1, HANDLER_MAGIC);\n"
-                        "\t/* handlerfn this handlers */\n"
-                        "\tduk_push_lstring(ctx, \"%s\", %ld);\n"
-                        "\t/* handlerfn this handlers click */\n"
-                        "\tduk_dup(ctx, -4);\n"
-                        "\t/* handlerfn this handlers click handlerfn */\n"
-                        "\tduk_put_prop(ctx, -3);\n"
-                        "\t/* handlerfn this handlers */\n"
-                        "\tdukky_register_event_listener_for(ctx,\n"
-                        "\t\t(dom_element *)((node_private_t *)priv)->node,\n"
-                        "\t\tcorestring_dom_click);\n"
-                        "\treturn 0;\n",
-                        atributee->name + 2,
-                        strlen(atributee->name + 2));
+                /* this events can't be generated atm */
+                if (strcmp( atributee->name +2, autocomplete) == 0 ||
+                    strcmp( atributee->name +2, autocompleteerror) == 0 ||
+                    strcmp( atributee->name +2, dragexit) == 0 ||
+                    strcmp( atributee->name +2, mouseenter) == 0 ||
+                    strcmp( atributee->name +2, mouseleave) == 0 ||
+                    strcmp( atributee->name +2, wheel) == 0 ||
+                    strcmp( atributee->name +2, sort) == 0 ||
+                    strcmp( atributee->name +2, toggle) == 0) {
+
+                        fprintf(outf,
+                                "\tduk_push_this(ctx);\n"
+                                "\t/* handlerfn this */\n"
+                                "\tduk_get_prop_string(ctx, -1, HANDLER_MAGIC);\n"
+                                "\t/* handlerfn this handlers */\n"
+                                "\tduk_push_lstring(ctx, \"%s\", %ld);\n"
+                                "\t/* handlerfn this handlers click */\n"
+                                "\tduk_dup(ctx, -4);\n"
+                                "\t/* handlerfn this handlers click handlerfn */\n"
+                                "\tduk_put_prop(ctx, -3);\n"
+                                "\t/* handlerfn this handlers */\n"
+                                "\tdukky_register_event_listener_for(ctx,\n"
+                                "\t\t(dom_element *)((node_private_t *)priv)->node,\n"
+                                "\t\tcorestring_dom_click);\n"
+                                "\treturn 0;\n",
+                                atributee->name + 2,
+                                strlen(atributee->name + 2));
+                } else {
+                        fprintf(outf,
+                                "\t/* handlerfn */\n"
+                                "\tduk_push_this(ctx);\n"
+                                "\t/* handlerfn this */\n"
+                                "\tduk_get_prop_string(ctx, -1, HANDLER_MAGIC);\n"
+                                "\t/* handlerfn this handlers */\n"
+                                "\tduk_push_lstring(ctx, \"%s\", %ld);\n"
+                                "\t/* handlerfn this handlers click */\n"
+                                "\tduk_dup(ctx, -4);\n"
+                                "\t/* handlerfn this handlers click handlerfn */\n"
+                                "\tduk_put_prop(ctx, -3);\n"
+                                "\t/* handlerfn this handlers */\n"
+                                "\tdukky_register_event_listener_for(ctx,\n"
+                                "\t\t(dom_element *)((node_private_t *)priv)->node,\n"
+                                "\t\tcorestring_dom_%s);\n"
+                                "\treturn 0;\n",
+                                atributee->name + 2,
+                                strlen(atributee->name + 2),
+                                atributee->name + 2);
+                }
                 return 0;
         }
         return -1;
